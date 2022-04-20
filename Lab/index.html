@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<!--GEOGRAHPY 6165
+Author: Yvette Hastings
+Date: April 20, 2022-->
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>My First Web GIS App</title>
+
+    <style>
+      html, body, #viewDiv {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/4.10/esri/css/main.css">
+    <script src="https://js.arcgis.com/4.10/"></script>
+    <script>
+      require([
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/widgets/ScaleBar",
+        "esri/layers/FeatureLayer",
+        "esri/widgets/Legend",
+        "esri/widgets/LayerList",
+        "esri/widgets/BasemapToggle",
+        "dojo/domReady!"
+      ], 
+      function(Map, MapView, ScaleBar, FeatureLayer, Legend, LayerList, BasemapToggle){
+        var map = new Map({
+        basemap: "streets"
+       });
+      var view = new MapView({
+        container: "viewDiv",  // Reference to the scene div in the HTML body section
+        map: map,  // Reference to the map object created before the scene
+        zoom: 6,  // Sets the zoom level based on level of detail (LOD)
+        center: [-100, 31] // Sets the center point of view in lon/lat
+      });
+      var scalebar = new ScaleBar ({
+        view:view,
+        unit: "dual"
+      });
+            var CarbonFprnt = new FeatureLayer ({
+        url: "https://webgis1.digit.utah.edu/arcgis/rest/services/hastings/ATXCarbonFtprnt_Hastings/MapServer/0"
+      });
+      var medInc = new FeatureLayer ({
+        url: "https://webgis1.digit.utah.edu/arcgis/rest/services/hastings/ATXCarbonFtprnt_Hastings/MapServer/1"
+      });
+      var legend = new Legend({
+                view: view,
+                style: {
+                  type: "card",
+                  layout: "stack"
+                }
+      });
+      var layerList = new LayerList ({
+        view: view,
+        statusIndicatorsVisible: true
+      });
+      var basemapToggle = new BasemapToggle ({
+        view: view,
+        nextBasemap: "hybrid"
+      });
+      
+      map.addMany([CarbonFprnt, medInc]);
+
+      view.ui.add ([
+        {
+          component: scalebar, 
+          position: "bottom-left"
+        },
+        {
+          component: legend,
+          position: "bottom-right"
+        },
+        {
+          component: layerList,
+          position: "top-right"
+        },
+        {
+          component: basemapToggle,
+          position: "top-left"
+        }          
+      ]);
+      
+
+//The next line is the end of the require block. You shouldn't add any JavaScript code below here!  
+});
+</script>
+</head>
+<body>
+  <div id="viewDiv"></div>
+</body>
+</html>
